@@ -41,7 +41,11 @@ class Mutate extends RestRule
                     new ArrayWithKey($this->resource->getFields($request)),
                 ],
                 $attributeConsideringRelationType.'.key' => [
-                    'sometimes',
+                    'present_if:'.$attributeConsideringRelationType.'.operation,update',
+                    'present_if:'.$attributeConsideringRelationType.'.operation,attach',
+                    'present_if:'.$attributeConsideringRelationType.'.operation,detach',
+                    'present_if:'.$attributeConsideringRelationType.'.operation,toggle',
+                    'present_if:'.$attributeConsideringRelationType.'.operation,sync',
                     'prohibited_if:'.$attributeConsideringRelationType.'.operation,create',
                     'exists:'.$this->resource::newModel()->getTable().','.$this->resource::newModel()->getKeyName(),
                 ],
