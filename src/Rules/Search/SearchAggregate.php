@@ -29,6 +29,9 @@ class SearchAggregate extends RestRule
                     Rule::in(['count', 'min', 'max', 'avg', 'sum', 'exists']),
                 ],
             ],
+
+
+
             !is_null($relationResource) ? [
                 $attribute.'.field' => [
                     'required_if:'.$attribute.'.type,min,max,avg,sum',
