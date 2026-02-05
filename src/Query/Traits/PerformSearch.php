@@ -243,7 +243,9 @@ trait PerformSearch
             $relation .= ' as '.$aggregate['alias'];
         }
 
-        return $this->queryBuilder->withAggregate([$relation => function (Builder $query) use ($aggregate) {
+
+
+        return $this->queryBuilder->disableDefaultLimit()->withAggregate([$relation => function (Builder $query) use ($aggregate) {
             $resource = $this->resource->relation($aggregate['relation'])?->resource();
 
             $queryBuilder = $this->newQueryBuilder(['resource' => $resource, 'query' => $query]);
