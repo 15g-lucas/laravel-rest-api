@@ -22,7 +22,7 @@ class Mutate extends RestRule
 
         $operationRules = Rule::in('create', 'update', ...($this->depth === 0 ? [] : ['attach', 'detach', 'toggle', 'sync']));
 
-        $attributeConsideringRelationType = $attribute.($this->relation?->hasMultipleEntries() ? '.*' : '');
+        $attributeConsideringRelationType = $attribute . ($this->relation?->hasMultipleEntries() ? '.*' : '');
 
         return array_merge(
             [
@@ -30,41 +30,60 @@ class Mutate extends RestRule
                     (new ResourceMutateRelationOperation())->setResource($this->resource),
                     (new ResourceCustomRules())->setResource($this->resource),
                 ],
-                $attributeConsideringRelationType.'.operation' => [
+
+                $attributeConsideringRelationType . '.operation' => [
                     'required',
                     $operationRules,
                 ],
-                $attributeConsideringRelationType.'.attributes' => [
+
+                $attributeConsideringRelationType . '.attributes' => [
                     'array',
-                    'prohibited_if:'.$attributeConsideringRelationType.'.operation,attach',
-                    'prohibited_if:'.$attributeConsideringRelationType.'.operation,detach',
-                    new ArrayWithKey($this->resource->getFields($request)),
+                    'prohibited_if:' . $attributeConsideringRelationType . '.operation,attach',
+                    'prohibited_if:' . $attributeConsideringRelationType . '.operation,detach',
+
+                    Rule::when(function () use ($request, $attributeConsideringRelationType) {
+                        $val = data_get($request->all(), $attributeConsideringRelationType . '.attributes');
+                        return is_array($val) && !empty($val);
+                    }, [
+                        new ArrayWithKey($this->resource->getFields($request)),
+                    ]),
                 ],
-                $attributeConsideringRelationType.'.key' => [
-                    'required_if:'.$attributeConsideringRelationType.'.operation,update',
-                    'required_if:'.$attributeConsideringRelationType.'.operation,attach',
-                    'required_if:'.$attributeConsideringRelationType.'.operation,detach',
-                    'required_if:'.$attributeConsideringRelationType.'.operation,toggle',
-                    'required_if:'.$attributeConsideringRelationType.'.operation,sync',
-                    'prohibited_if:'.$attributeConsideringRelationType.'.operation,create',
-                    'exists:'.$this->resource::newModel()->getTable().','.$this->resource::newModel()->getKeyName(),
+
+                $attributeConsideringRelationType . '.key' => [
+                    'required_if:' . $attributeConsideringRelationType . '.operation,update',
+                    'required_if:' . $attributeConsideringRelationType . '.operation,attach',
+                    'required_if:' . $attributeConsideringRelationType . '.operation,detach',
+                    'required_if:' . $attributeConsideringRelationType . '.operation,toggle',
+                    'required_if:' . $attributeConsideringRelationType . '.operation,sync',
+                    'prohibited_if:' . $attributeConsideringRelationType . '.operation,create',
+                    'exists:' . $this->resource::newModel()->getTable() . ',' . $this->resource::newModel()->getKeyName(),
                 ],
-                $attributeConsideringRelationType.'.without_detaching' => [
+
+                $attributeConsideringRelationType . '.without_detaching' => [
                     'boolean',
-                    'prohibited_unless:'.$attributeConsideringRelationType.'.operation,sync',
+                    'prohibited_unless:' . $attributeConsideringRelationType . '.operation,sync',
                 ],
-                $attributeConsideringRelationType.'.relations' => [
+
+                $attributeConsideringRelationType . '.relations' => [
                     'sometimes',
                     'array',
-                    new ArrayWithKey(
-                        collect($this->resource->getRelations($request))
-                            ->map(function (Relation $relation) {
-                                return $relation->relation;
-                            })
-                            ->toArray()
-                    ),
+
+                    Rule::when(function () use ($request, $attributeConsideringRelationType) {
+                        $val = data_get($request->all(), $attributeConsideringRelationType . '.relations');
+                        return is_array($val) && !empty($val);
+                    }, [
+                        new ArrayWithKey(
+                            collect($this->resource->getRelations($request))
+                                ->map(function (Relation $relation) {
+                                    return $relation->relation;
+                                })
+                                ->toArray()
+                        ),
+                    ]),
                 ],
-                $attributeConsideringRelationType.'.relations.*' => (new MutateRelation(depth: $this->depth))->setResource($this->resource),
+
+                $attributeConsideringRelationType . '.relations.*' =>
+                    (new MutateRelation(depth: $this->depth))->setResource($this->resource),
             ],
             $this->relation?->rules($this->resource, $attribute) ?? []
         );
