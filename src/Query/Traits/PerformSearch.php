@@ -245,7 +245,6 @@ trait PerformSearch
 
 
 
-        s
 
         return $this->queryBuilder->withAggregate([$relation => function (Builder $query) use ($aggregate) {
             $resource = $this->resource->relation($aggregate['relation'])?->resource();
