@@ -516,13 +516,13 @@ class SearchAggregatesOperationsTest extends TestCase
         $matchingModel = ModelFactory::new()
             ->has(
                 BelongsToManyRelationFactory::new()
-                    ->count(20)
+                    ->count(200)
             )
             ->create()->fresh();
         $matchingModel2 = ModelFactory::new()
             ->has(
                 BelongsToManyRelationFactory::new()
-                    ->count(20)
+                    ->count(200)
             )
             ->create()->fresh();
 
