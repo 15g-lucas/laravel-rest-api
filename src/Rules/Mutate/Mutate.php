@@ -42,6 +42,7 @@ class Mutate extends RestRule
                 ],
                 $attributeConsideringRelationType.'.key' => [
                     'sometimes',
+                    'sometimes',
                     'required_if:'.$attributeConsideringRelationType.'.operation,update',
                     'required_if:'.$attributeConsideringRelationType.'.operation,attach',
                     'required_if:'.$attributeConsideringRelationType.'.operation,detach',
