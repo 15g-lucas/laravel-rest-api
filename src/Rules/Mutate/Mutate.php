@@ -42,11 +42,6 @@ class Mutate extends RestRule
                 ],
                 $attributeConsideringRelationType.'.key' => [
                     'sometimes',
-                    'required_if:'.$attributeConsideringRelationType.'.operation,update',
-                    'required_if:'.$attributeConsideringRelationType.'.operation,attach',
-                    'required_if:'.$attributeConsideringRelationType.'.operation,detach',
-                    'required_if:'.$attributeConsideringRelationType.'.operation,toggle',
-                    'required_if:'.$attributeConsideringRelationType.'.operation,sync',
                     'prohibited_if:'.$attributeConsideringRelationType.'.operation,create',
                     'exists:'.$this->resource::newModel()->getTable().','.$this->resource::newModel()->getKeyName(),
                 ],
