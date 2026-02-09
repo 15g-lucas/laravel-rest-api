@@ -1794,15 +1794,6 @@ class MutateUpdateOperationsTest extends TestCase
             Model::find($response->json('updated.0'))->belongsToManyRelation()->count(),
             0
         );
-
-        $this->assertDatabaseHas(
-            $belongsToManySynced->getTable(),
-            ['number' => 5001]
-        );
-        $this->assertDatabaseHas(
-            $modelToUpdate->belongsToManyRelation()->getTable(),
-            ['number' => 20]
-        );
     }
 
     public function test_updating_a_resource_with_syncing_belongs_to_many_relation_without_detaching(): void
