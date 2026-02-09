@@ -718,7 +718,6 @@ class MutateCreateOperationsTest extends TestCase
         );
     }
 
-
     public function test_creating_a_resource_with_updating_has_many_relation(): void
     {
         $modelToCreate = ModelFactory::new()->makeOne();

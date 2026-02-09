@@ -350,6 +350,7 @@ class MutateCreateMorphOperationsTest extends TestCase
             2
         );
     }
+
     public function test_creating_a_resource_with_attaching_empty_morph_many_relation(): void
     {
         $modelToCreate = ModelFactory::new()->makeOne();
@@ -392,8 +393,6 @@ class MutateCreateMorphOperationsTest extends TestCase
             0
         );
     }
-
-
 
     public function test_creating_a_resource_with_updating_morph_many_relation(): void
     {
