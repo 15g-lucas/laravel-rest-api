@@ -2510,7 +2510,7 @@ class MutateUpdateOperationsTest extends TestCase
     public function test_updating_a_resource_with_detaching_empty_array_belongs_to_many_relation(): void
     {
         $modelToUpdate = ModelFactory::new()->createOne();
-        $belongsToManyRelationToDetach = BelongsToManyRelationFactory::new()
+        BelongsToManyRelationFactory::new()
             ->recycle($modelToUpdate)
             ->createOne();
 
