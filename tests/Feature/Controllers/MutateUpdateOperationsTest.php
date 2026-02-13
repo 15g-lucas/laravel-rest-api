@@ -1457,6 +1457,55 @@ class MutateUpdateOperationsTest extends TestCase
         );
     }
 
+    public function test_updating_a_resource_with_toggling_empty_belongs_to_many_relation(): void
+    {
+        $modelToUpdate = ModelFactory::new()->createOne();
+        $belongsToManyToggled = BelongsToManyRelationFactory::new()->createOne();
+
+        $modelToUpdate->belongsToManyRelation()
+            ->attach($belongsToManyToggled);
+
+        Gate::policy(Model::class, GreenPolicy::class);
+        Gate::policy(BelongsToManyRelation::class, GreenPolicy::class);
+
+        $response = $this->post(
+            '/api/models/mutate',
+            [
+                'mutate' => [
+                    [
+                        'operation'  => 'update',
+                        'key'        => $modelToUpdate->getKey(),
+                        'attributes' => [
+                            'name'   => 'new name',
+                            'number' => 5001,
+                        ],
+                        'relations' => [
+                            'belongsToManyRelation' => [
+                                [
+                                    'operation' => 'toggle',
+                                    'key'       => [],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            ['Accept' => 'application/json']
+        );
+
+        $this->assertMutatedResponse(
+            $response,
+            [],
+            [$modelToUpdate],
+        );
+
+        // Here we test that toggling with empty key detaches all relations
+        $this->assertEquals(
+            1,
+            Model::find($response->json('updated.0'))->belongsToManyRelation()->count()
+        );
+    }
+
     public function test_updating_a_resource_with_toggling_multiple_belongs_to_many_relation(): void
     {
         $modelToUpdate = ModelFactory::new()->createOne();
