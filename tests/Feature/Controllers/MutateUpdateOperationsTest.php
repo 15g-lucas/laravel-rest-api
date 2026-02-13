@@ -2510,9 +2510,10 @@ class MutateUpdateOperationsTest extends TestCase
     public function test_updating_a_resource_with_detaching_empty_array_belongs_to_many_relation(): void
     {
         $modelToUpdate = ModelFactory::new()->createOne();
-        BelongsToManyRelationFactory::new()
-            ->recycle($modelToUpdate)
+        $existingRelation = BelongsToManyRelationFactory::new()
             ->createOne();
+
+        $modelToUpdate->belongsToManyRelation()->attach($existingRelation);
 
         Gate::policy(Model::class, GreenPolicy::class);
         Gate::policy(BelongsToManyRelation::class, GreenPolicy::class);
@@ -2548,10 +2549,10 @@ class MutateUpdateOperationsTest extends TestCase
             [$modelToUpdate],
         );
 
-        // Here we test that the relation is correctly linked
+        // Here we test that detaching with empty array preserves existing relations
         $this->assertEquals(
-            Model::find($response->json('updated.0'))->belongsToManyRelation()->count(),
-            0
+            1,
+            Model::find($response->json('updated.0'))->belongsToManyRelation()->count()
         );
     }
 
